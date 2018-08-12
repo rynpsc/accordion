@@ -1,0 +1,31 @@
+{
+  "name": "@rynpsc/accordion",
+  "version": "1.0.0",
+  "description": "A modern, lightweight and accessible accordion",
+  "main": "dist/accordion.cjs.js",
+  "module": "dist/accordion.es.js",
+  "files": [
+    "src",
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "dev": "microbundle watch src/accordion.js",
+    "build": "rimraf dist && microbundle src/accordion.js",
+    "prepare": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rynpsc/accordion"
+  },
+  "keywords": [
+    "accordion",
+    "accessibility"
+  ],
+  "author": "Ryan Pascoe",
+  "license": "MIT",
+  "devDependencies": {
+    "microbundle": "^0.11.0",
+    "rimraf": "^3.0.2"
+  }
+}
