@@ -134,13 +134,11 @@ export function accordion(id, options) {
 			if (header.dataset.disabled !== undefined) {
 				disable(id);
 			}
-
-			element.classList.add(config.initialisedClass);
-
-			initialised = true;
-
-			emit('initialised');
 		});
+
+		initialised = true;
+		emit('initialised');
+		element.classList.add(config.initialisedClass);
 	}
 
 	/**
