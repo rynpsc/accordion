@@ -152,8 +152,6 @@ export function accordion(id, options) {
 			return;
 		}
 
-		openAll();
-
 		element.classList.remove(config.initialisedClass);
 
 		items.forEach(item => {
@@ -171,7 +169,9 @@ export function accordion(id, options) {
 			control.removeEventListener('click', onHeaderClick);
 			control.removeEventListener('keydown', onHeaderKeydown);
 
-			panel.style = '';
+			panel.removeAttribute('role');
+			panel.removeAttribute('style');
+			panel.removeAttribute('aria-labelledby');
 			panel.classList.remove(config.activePanelClass);
 		});
 
