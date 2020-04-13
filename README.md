@@ -34,7 +34,6 @@ The `accordion` constructor takes two parameters:
 - `id` - The ID of the element
 - `options` -  Configuration Object [(see options)](#options)
 
-
 ```js
 import { accordion } from '@rynpsc/accordion';
 
@@ -45,27 +44,19 @@ if (accordion) {
 }
 ```
 
-### CSS
-
-```css
-.accordion--initialised .accordion-panel {
-  display: none;
-}
-```
-
 #### Padding and Animation
 
 To animate a panel that has padding it is recommended to apply the padding to a child element.
 
 ```html
 <div id="panel-two">
-    <div class="panel"></div>
+  <div class="panel"></div>
 </div>
 ```
 
 ```css
 .panel {
-    padding: 10px
+  padding: 10px
 }
 ```
 
@@ -198,7 +189,7 @@ import { getInstanceById } from '@rynpsc/accordion';
 const instance = getInstanceById('accordion');
 
 if (instance) {
-    instance.openAll();
+  instance.openAll();
 }
 ```
 
