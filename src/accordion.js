@@ -89,7 +89,7 @@ export function accordion(id, options) {
 			return;
 		}
 
-		headers.forEach((header, i) => {
+		headers.forEach(header => {
 			const id = header.dataset.for;
 			const panel = document.getElementById(id);
 			const control = document.createElement('button');
