@@ -1,6 +1,6 @@
 {
   "name": "@rynpsc/accordion",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A modern, lightweight and accessible accordion",
   "main": "dist/accordion.cjs.js",
   "module": "dist/accordion.es.js",
