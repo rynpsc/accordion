@@ -10,8 +10,8 @@
     "README.md"
   ],
   "scripts": {
-    "dev": "microbundle watch src/accordion.js",
-    "build": "rimraf dist && microbundle src/accordion.js",
+    "dev": "rollup -c -w",
+    "build": "rimraf dist && rollup -c",
     "prepare": "npm run build"
   },
   "repository": {
@@ -25,7 +25,7 @@
   "author": "Ryan Pascoe",
   "license": "MIT",
   "devDependencies": {
-    "microbundle": "^0.11.0",
-    "rimraf": "^3.0.2"
+    "rimraf": "^3.0.2",
+    "rollup": "^2.6.1"
   }
 }
