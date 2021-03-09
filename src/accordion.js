@@ -29,7 +29,7 @@ export function getInstanceById(id) {
  * @param {Object} options
  */
 export function accordion(id, options) {
-	const config = { ...defaults, ...options};
+	const config = { ...defaults, ...options };
 	const element = document.getElementById(id);
 
 	if (!element) {
