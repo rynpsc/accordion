@@ -500,10 +500,12 @@ export function accordion(id, options) {
 	 * @param {Function} handler - Callback function to handle the event.
 	 */
 	function on(type, handler) {
-		element.addEventListener(type, handler);
+		let prefixedName = getPrefixedEventName(type);
+
+		element.addEventListener(prefixedName, handler);
 
 		// Track event listeners to remove when calling destroy.
-		(events[type] || (events[type] = [])).push(handler);
+		(events[prefixedName] || (events[prefixedName] = [])).push(handler);
 	}
 
 	/**
@@ -513,7 +515,7 @@ export function accordion(id, options) {
 	 * @param {Function} handler - Callback function to handle the event.
 	 */
 	function off(type, handler) {
-		element.removeEventListener(type, handler);
+		element.removeEventListener(getPrefixedEventName(type), handler);
 	}
 
 	/**
@@ -529,14 +531,22 @@ export function accordion(id, options) {
 			cancelable: false,
 		};
 
-		const prefixedName = `accordion:${name}`;
-
 		let event = new CustomEvent(
-			prefixedName,
+			getPrefixedEventName(name),
 			{ ...defaultOptions, ...options }
 		);
 
 		return element.dispatchEvent(event);
+	}
+
+	/**
+	 * Returns the given event name with the event prefix.
+	 *
+	 * @param {string} name The event name
+	 * @returns {string} The prefixed even name
+	 */
+	function getPrefixedEventName(name) {
+		return `accordion:${name};`
 	}
 
 	const instance = {
