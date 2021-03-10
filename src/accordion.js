@@ -155,17 +155,17 @@ export function accordion(id, options) {
 		items.forEach(item => {
 			const { control, panel } = item;
 
-			control.removeAttribute('aria-controls');
-			control.removeAttribute('aria-expanded');
 			control.classList.remove(config.activeHeaderClass);
 
 			if (config.moveTriggerClass) {
 				control.parentNode.className = control.className;
 			}
 
-			control.parentNode.innerHTML = control.innerHTML;
-			control.removeEventListener('click', onHeaderClick);
-			control.removeEventListener('keydown', onHeaderKeydown);
+			let html = control.innerHTML;
+			let parent = control.parentNode;
+
+			control.remove();
+			parent.innerHTML = html;
 
 			panel.removeAttribute('role');
 			panel.removeAttribute('style');
