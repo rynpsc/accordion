@@ -561,6 +561,7 @@ export function accordion(id, options) {
 		disable,
 		openAll,
 		closeAll,
+		getItem,
 	};
 
 	return instances[id] = instance;
