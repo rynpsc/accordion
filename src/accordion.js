@@ -123,6 +123,10 @@ export function accordion(id, options) {
 				control,
 				active: false,
 				disabled: false,
+				enable: () => enable(id),
+				disable: () => disable(id),
+				open: options => _expand(id, options),
+				close: options => _collapse(id, options),
 			};
 
 			items.push(item);
