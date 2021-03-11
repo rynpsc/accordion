@@ -142,8 +142,8 @@ export function accordion(id, options) {
 	}
 
 	/**
-	 * Destroy accordion - removes any classes or attributes added in `init`,
-	 * removes any registered event listeners, and removes the accordion instance.
+	 * Removes any classes or attributes added in `init` and removes any
+	 * registered event listeners added via the `on` method.
 	 */
 	function destroy() {
 		if (!initialised) {
@@ -294,7 +294,7 @@ export function accordion(id, options) {
 	}
 
 	/**
-	 * Enable a panel, allowing to be collapsed or expanded.
+	 * Enable a panel, allowing it to be collapsed or expanded.
 	 *
 	 * @param {number|string} id
 	 */
