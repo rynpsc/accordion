@@ -196,14 +196,14 @@ export function accordion(id, options) {
 	 * Focus the next accordion control.
 	 */
 	function focusNext() {
-		focusPreviousOrNext(false);
+		shiftFocus(1);
 	}
 
 	/**
 	 * Focus the previous accordion control.
 	 */
 	function focusPrevious() {
-		focusPreviousOrNext(true);
+		shiftFocus(-1);
 	}
 
 	/**
@@ -221,11 +221,11 @@ export function accordion(id, options) {
 	}
 
 	/**
-	 * Focuses the previous or next control, wraps around to first or last control when required.
+	 * Shifts focus by the given amount relative to the currently focused control.
 	 *
-	 * @param {boolean} previous - If true focus the previous control, otherwise focus the next.
+	 * @param {number} step
 	 */
-	function focusPreviousOrNext(previous) {
+	function shiftFocus(step) {
 		let active = document.activeElement;
 		let activeIndex = items.findIndex(item => item.control === active);
 
@@ -233,7 +233,7 @@ export function accordion(id, options) {
 			return false;
 		}
 
-		let newIndex = previous ? activeIndex - 1 : activeIndex + 1;
+		let newIndex = activeIndex + step;
 
 		items[modulo(newIndex, items)].control.focus();
 	}
