@@ -2,17 +2,16 @@ export default {
 	/**
 	 * Class to add to root element on initialisation.
 	 */
-	initialisedClass: 'accordion--initialised',
+	initialisedClass: false,
 
 	/**
 	 * Class to add active panel.
 	 */
-	activePanelClass: 'accordion-panel--active',
+	activePanelClass: false,
 
 	/**
-	 * Class to add to active header.
+	 * Class to add to active trigger.
 	 */
-	activeHeaderClass: 'accordion-header--active',
 
 	/**
 	 * Animate the opening and closing of panels.

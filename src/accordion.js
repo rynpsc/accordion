@@ -97,14 +97,16 @@ export function accordion(id, options) {
 			control.type = 'button';
 			control.id = `${ id }-label`;
 
-			if (config.moveTriggerClass) {
+			if (config.triggerClass === true) {
 				control.className = header.className;
+				header.className = '';
+			} else if (typeof config.triggerClass === 'string') {
+				control.className = config.triggerClass;
 			}
 
 			control.innerHTML = header.innerHTML;
 
 			header.innerHTML = '';
-			header.className = '';
 			header.appendChild(control);
 
 			control.setAttribute('aria-controls', id);
@@ -159,9 +161,9 @@ export function accordion(id, options) {
 		items.forEach(item => {
 			const { control, panel } = item;
 
-			control.classList.remove(config.activeHeaderClass);
+			control.classList.remove(config.activeTriggerClass);
 
-			if (config.moveTriggerClass) {
+			if (config.triggerClass === true) {
 				control.parentNode.className = control.className;
 			}
 
@@ -352,8 +354,13 @@ export function accordion(id, options) {
 		items[index].active = true;
 		control.setAttribute('aria-expanded', 'true');
 
-		panel.classList.add(config.activePanelClass);
-		control.classList.add(config.activeHeaderClass);
+		if (config.activePanelClass) {
+			panel.classList.add(config.activePanelClass);
+		}
+
+		if (config.activeTriggerClass) {
+			control.classList.add(config.activeTriggerClass);
+		}
 
 		if (!animate) {
 			panel.style.height = '';
@@ -402,7 +409,7 @@ export function accordion(id, options) {
 		control.setAttribute('aria-expanded', false);
 
 		panel.classList.remove(config.activePanelClass);
-		control.classList.remove(config.activeHeaderClass);
+		control.classList.remove(config.activeTriggerClass);
 
 		if (!animate) {
 			panel.style.display = 'none';
