@@ -1,150 +1,157 @@
-import defaults from './defaults';
-import { modulo } from './utils';
+import { getInnerHeight, modulo } from './utils';
 
 export const instances = {};
 
-/**
- * Get the accordion instance with the corresponding ID.
- *
- * @param {string} id - ID of accordion element.
- * @returns {Object|null} Returns the instance of one is found matching the ID, null otherwise.
- */
 export function getInstanceById(id) {
-	if (id === undefined) {
-		return null;
-	}
-
-	if (!instances.hasOwnProperty(id)) {
-		return null;
+	if (!Object.prototype.hasOwnProperty.call(instances, id)) {
+		return undefined;
 	}
 
 	return instances[id];
 }
 
 /**
- * Accordion.
- *
- * @constructor
- * @param {string} id - The ID of the containing HTMLElement.
- * @param {Object} options
+ * @param id - The ID of the containing HTMLElement.
+ * @param options
  */
-export function accordion(id, options) {
-	const config = { ...defaults, ...options };
+export function accordion(id, options = {}) {
+	const config = { ...{
+		initialisedClass: '',
+		activePanelClass: '',
+		activeTriggerClass: '',
+		triggerClass: true,
+		animate: true,
+		multiselect: true,
+	}, ...options };
+
 	const element = document.getElementById(id);
 
 	if (!element) {
 		return;
 	}
 
-	if (instances.hasOwnProperty(id)) {
-		return instances[id];
+	if (getInstanceById(id)) {
+		return getInstanceById(id);
 	}
 
-	const events = {};
-	const items = [];
-	const activeIDs = [];
 	let initialised = false;
 
-	const headers = Array.from(element.querySelectorAll('[data-for]'));
+	const events = {};
 
-	/**
-	 * Gets an accordion item by either it's numerical index or id.
-	 *
-	 * @returns {object|undefined}
-	 * @param value
-	 */
-	function getItem(value) {
-		let index = getItemIndex(value);
-
-		return items[index];
-	}
+	const items = [];
+	const activeIds = [];
 
 	/**
 	 * Gets an accordion items index by either it's numerical index or id.
 	 *
-	 * @param {number|string} value
-	 * @returns {number} Returns the value passed in if it's a number or the
+	 * @param target The items id or index
+	 * @returns The value passed in if it's a number or the
 	 * index of the first item with the matching ID if passed a string,
 	 * -1 otherwise.
 	 */
-	function getItemIndex(value) {
+	 function getItemIndex(target) {
 		let index;
 
-		if (typeof value === 'number') {
-			index = value;
-		} else if (typeof value === 'string') {
-			index = items.findIndex(item => item.id === value);
+		if (typeof target === 'number') {
+			index = target;
 		} else {
-			new TypeError('ID must be typeof number or string.');
+			index = items.findIndex(item => item.id === target);
 		}
 
 		return index;
 	}
 
 	/**
-	 * Init
+	 * Gets an accordion item by either it's numerical index or id.
+	 *
+	 * @param target The items id or index
 	 */
+	function getItem(target) {
+		let index = getItemIndex(target);
+
+		if (index === -1) {
+			return undefined;
+		}
+
+		return items[index];
+	}
+
 	function init() {
 		if (initialised) {
 			return;
 		}
 
+		const headers = Array.from(element.querySelectorAll('[data-for]'));
+
 		headers.forEach(header => {
-			const id = header.dataset.for;
-			const panel = document.getElementById(id);
-			const control = document.createElement('button');
-
-			control.type = 'button';
-			control.id = `${ id }-label`;
-
-			if (config.triggerClass === true) {
-				control.className = header.className;
-				header.className = '';
-			} else if (typeof config.triggerClass === 'string') {
-				control.className = config.triggerClass;
+			if (!(header instanceof HTMLElement)) {
+				return;
 			}
 
-			control.innerHTML = header.innerHTML;
-
-			header.innerHTML = '';
-			header.appendChild(control);
-
-			control.setAttribute('aria-controls', id);
-			control.setAttribute('aria-expanded', 'false');
-
-			control.addEventListener('click', onHeaderClick);
-			control.addEventListener('keydown', onHeaderKeydown);
-
-			panel.style.display = 'none';
-			panel.setAttribute('role', 'region');
-			panel.setAttribute('aria-labelledby', `${ id }-label`);
-
-			let item = {
-				id,
-				panel,
-				control,
-				active: false,
-				disabled: false,
-				enable: () => enable(id),
-				disable: () => disable(id),
-				open: options => _expand(id, options),
-				close: options => _collapse(id, options),
-			};
-
-			items.push(item);
+			let item = addItem(header);
 
 			if (header.dataset.expanded !== undefined) {
-				open(id, { animate: false });
+				item.open({ animate: false });
 			}
 
 			if (header.dataset.disabled !== undefined) {
-				disable(id);
+				item.disable();
 			}
 		});
 
 		initialised = true;
 		emit('initialised');
-		element.classList.add(config.initialisedClass);
+
+		if (config.initialisedClass) {
+			element.classList.add(config.initialisedClass);
+		}
+	}
+
+	function addItem(element) {
+		let id = element.dataset.for;
+		let panel = document.getElementById(id);
+		let control = document.createElement('button');
+
+		control.type = 'button';
+		control.id = `${ id }-label`;
+
+		if (config.triggerClass === true) {
+			control.className = element.className;
+			element.className = '';
+		} else if (typeof config.triggerClass === 'string') {
+			control.className = config.triggerClass;
+		}
+
+		control.innerHTML = element.innerHTML;
+
+		element.innerHTML = '';
+		element.appendChild(control);
+
+		control.setAttribute('aria-controls', id);
+		control.setAttribute('aria-expanded', 'false');
+
+		control.addEventListener('click', onHeaderClick);
+		control.addEventListener('keydown', onHeaderKeydown);
+
+		panel.style.display = 'none';
+		panel.setAttribute('role', 'region');
+		panel.setAttribute('aria-labelledby', `${ id }-label`);
+
+		let item = {
+			id,
+			panel,
+			control,
+			active: false,
+			disabled: false,
+			enable: () => enable(id),
+			disable: () => disable(id),
+			open: (options) => _expand(id, options),
+			close: (options) => _collapse(id, options),
+		};
+
+		items.push(item);
+
+		return item;
 	}
 
 	/**
@@ -156,36 +163,42 @@ export function accordion(id, options) {
 			return;
 		}
 
-		element.classList.remove(config.initialisedClass);
+		if (config.initialisedClass) {
+			element.classList.remove(config.initialisedClass);
+		}
 
 		items.forEach(item => {
-			const { control, panel } = item;
+			let controlHtml = item.control.innerHTML;
+			let controlParent = item.control.parentNode;
 
-			control.classList.remove(config.activeTriggerClass);
-
-			if (config.triggerClass === true) {
-				control.parentNode.className = control.className;
+			if (config.activeTriggerClass) {
+				item.control.classList.remove(config.activeTriggerClass);
 			}
 
-			let html = control.innerHTML;
-			let parent = control.parentNode;
+			if (config.triggerClass === true) {
+				controlParent.className = item.control.className;
+			}
 
-			control.remove();
-			parent.innerHTML = html;
+			item.control.remove();
+			controlParent.innerHTML = controlHtml;
 
-			panel.removeAttribute('role');
-			panel.removeAttribute('style');
-			panel.removeAttribute('aria-labelledby');
-			panel.classList.remove(config.activePanelClass);
+			['role', 'style', 'aria-labelledby'].forEach(attribute => {
+				item.panel.removeAttribute(attribute);
+			});
+
+			if (config.activePanelClass) {
+				item.panel.classList.remove(config.activePanelClass);
+			}
 		});
 
 		items.length = 0;
-		activeIDs.length = 0;
+		activeIds.length = 0;
+
 		delete instances[id];
 
 		emit('destroy');
 
-		for (const [name, handlers] of Object.entries(events)) {
+		for (const [ name, handlers ] of Object.entries(events)) {
 			handlers.forEach(handler => off(name, handler));
 
 			delete events[name];
@@ -225,7 +238,7 @@ export function accordion(id, options) {
 	/**
 	 * Shifts focus by the given amount relative to the currently focused control.
 	 *
-	 * @param {number} step
+	 * @param step
 	 */
 	function shiftFocus(step) {
 		let active = document.activeElement;
@@ -241,195 +254,197 @@ export function accordion(id, options) {
 	}
 
 	/**
-	 * Toggle the panel with the provided ID.
+	 * Expand an accordion item.
 	 *
-	 * @param id
+	 * @param target The items id or index
 	 * @param options
 	 */
-	function toggle(id, options = {}) {
-		let { active } = getItem(id);
-
-		active ? close(id, options) : open(id, options);
-	}
-
-	/**
-	 * Expand an accordion item(s), by either it's index or id.
-	 *
-	 * @param {array|number|string} id
-	 * @param {object} options
-	 */
-	function open(id, options = {}) {
-		if (Array.isArray(id)) {
-			id.forEach(id => _expand(id, options));
-		} else {
-			_expand(id, options);
+		 function open(target, options = {}) {
+			if (!Array.isArray(target)) {
+				_expand(target, options);
+			} else {
+				target.forEach(id => _expand(id, options));
+			}
 		}
-	}
 
-	/**
-	 * Collapse an accordion item(s), by either it's index or id.
-	 *
-	 * @param {array|number|string} ids
-	 * @param {object} options
-	 */
-	function close(ids, options = {}) {
-		if (Array.isArray(ids)) {
-			ids.forEach(id => _collapse(id, options));
-		} else {
-			_collapse(ids, options);
+		/**
+		 * Collapse an accordion item.
+		 *
+		 * @param target The items id or index
+		 * @param options
+		 */
+		function close(target, options = {}) {
+			if (!Array.isArray(target)) {
+				_collapse(target, options);
+			} else {
+				target.forEach(id => _collapse(id, options));
+			}
 		}
+
+	/**
+	 * Toggle the panel with the provided ID.
+	 *
+	 * @param target The id or index of the panel to toggle
+	 * @param options
+	 */
+	function toggle(target, options = {}) {
+		let item = getItem(target);
+
+		if (item === undefined) {
+			return;
+		}
+
+		item.active ? item.close(options) : item.open(options);
 	}
 
 	/**
-	 * Expand all panels.
+	 * Open all panels.
 	 */
 	function openAll() {
-		items.forEach(item => open(item.id, {
-			animate: false,
-			multiselect: true,
-		}));
+		items.forEach(item => item.open({ animate: false, multiselect: true }));
 	}
 
 	/**
-	 * Collapse all panels.
+	 * Close all panels.
 	 */
 	function closeAll() {
-		items.reverse().forEach(item => close(item.id, {
-			animate: false,
-		}));
+		items.forEach(item => item.close({ animate: false }));
 	}
 
 	/**
 	 * Enable a panel, allowing it to be collapsed or expanded.
 	 *
-	 * @param {number|string} id
+	 * @param target The id or index of the panel to enable
 	 */
-	function enable(id) {
-		let index = getItemIndex(id);
-		let { control } = items[index];
+	function enable(target) {
+		let item = getItem(target);
 
-		items[index].disabled = false;
-		control.setAttribute('aria-disabled', false);
+		if (item === undefined) {
+			return;
+		}
+
+		if (!emit('enable', { cancelable: true, detail: item })) {
+			return;
+		}
+
+		item.disabled = false;
+		item.control.setAttribute('aria-disabled', 'false');
 	}
 
 	/**
 	 * Disable a panel, preventing it from being collapsed or expanded.
 	 *
-	 * @param {number|string} id
+	 * @param target The id or index of the panel to disable
 	 */
-	function disable(id) {
-		let index = getItemIndex(id);
-		let { control } = items[index];
+	function disable(target) {
+		let item = getItem(target);
 
-		items[index].disabled = true;
-		control.setAttribute('aria-disabled', true);
+		if (item === undefined) {
+			return;
+		}
+
+		if (!emit('disable', { cancelable: true, detail: item })) {
+			return;
+		}
+
+		item.disabled = true;
+		item.control.setAttribute('aria-disabled', 'true');
 	}
 
 	/**
 	 * Expand the panel with the provided ID.
 	 *
-	 * @param {string} id
+	 * @param target
 	 * @param animate
 	 * @param multiselect
 	 */
-	function _expand(id, {
-		animate = config.animate,
-		multiselect = config.multiselect,
-	} = {}) {
+	function _expand(target, { animate = config.animate, multiselect = config.multiselect } = {}) {
+		let item = getItem(target);
 
-		let index = getItemIndex(id);
-		let { active, control, panel, disabled } = items[index];
-
-		if (active || disabled) {
+		if (item === undefined || item.active || item.disabled) {
 			return;
 		}
 
-		if (!emit('open', {
-			cancelable: true,
-			detail: items[index],
-		})) {
+		if (!emit('open', { cancelable: true, detail: item })) {
 			return;
 		}
 
-		items[index].active = true;
-		control.setAttribute('aria-expanded', 'true');
+		item.active = true;
+		item.control.setAttribute('aria-expanded', 'true');
 
 		if (config.activePanelClass) {
-			panel.classList.add(config.activePanelClass);
+			item.panel.classList.add(config.activePanelClass);
 		}
 
 		if (config.activeTriggerClass) {
-			control.classList.add(config.activeTriggerClass);
+			item.control.classList.add(config.activeTriggerClass);
 		}
 
 		if (!animate) {
-			panel.style.height = '';
-			panel.style.display = 'block';
+			item.panel.style.height = '';
+			item.panel.style.display = 'block';
 		} else {
-			let startHeight = panel.clientHeight;
+			let startHeight = item.panel.clientHeight;
 
-			panel.style.height = 'auto';
-			panel.style.display = 'block';
+			item.panel.style.height = 'auto';
+			item.panel.style.display = 'block';
 
-			let endHeight = panel.clientHeight;
+			let endHeight = item.panel.clientHeight;
 
-			animateHeight(panel, startHeight, endHeight);
+			animateHeight(item.panel, startHeight, endHeight);
 		}
 
 		if (!multiselect) {
-			close(activeIDs, options);
+			close(activeIds, options);
 		}
 
-		activeIDs.push(id);
+		activeIds.push(item.id);
 	}
 
 	/**
 	 * Collapse the panel with the provided ID.
 	 *
-	 * @param {string} id
+	 * @param target
 	 */
-	function _collapse(id, { animate = config.animate } = {}) {
+	function _collapse(target, { animate = config.animate } = {}) {
+		let item = getItem(target);
 
-		let index = getItemIndex(id);
-		let { active, panel, control, disabled } = items[index];
-
-		if (!active || disabled) {
+		if (item === undefined || !item.active || item.disabled) {
 			return;
 		}
 
-		if (!emit('close', {
-			cancelable: true,
-			detail: items[index],
-		})) {
+		if (!emit('close', { cancelable: true, detail: item })) {
 			return;
 		}
 
-		items[index].active = false;
+		item.active = false;
+		item.control.setAttribute('aria-expanded', 'false');
 
-		control.setAttribute('aria-expanded', false);
+		if (config.activePanelClass) {
+			item.panel.classList.remove(config.activePanelClass);
+		}
 
-		panel.classList.remove(config.activePanelClass);
-		control.classList.remove(config.activeTriggerClass);
+		if (config.activeTriggerClass) {
+			item.control.classList.remove(config.activeTriggerClass);
+		}
 
 		if (!animate) {
-			panel.style.display = 'none';
+			item.panel.style.display = 'none';
 		} else {
-			animateHeight(panel, panel.clientHeight, 0);
+			animateHeight(item.panel, item.panel.clientHeight, 0);
 		}
 
-		{
-			let index = activeIDs.indexOf(id);
+		let index = activeIds.indexOf(item.id);
 
-			if (index > -1) {
-				activeIDs.splice(index, 1);
-			}
+		if (index > -1) {
+			activeIds.splice(index, 1);
 		}
 	}
 
 	/**
 	 * Handles the header click event.
 	 *
-	 * @param {Event} event
+	 * @param event
 	 */
 	function onHeaderClick(event) {
 		event.preventDefault();
@@ -439,33 +454,32 @@ export function accordion(id, options) {
 	/**
 	 * Handles the header keydown event.
 	 *
-	 * @param {Event} event
+	 * @param event
 	 */
 	function onHeaderKeydown(event) {
-		switch (event.key) {
-			case 'ArrowUp':
-				focusPrevious();
-				event.preventDefault();
-				break;
-			case 'ArrowDown':
-				focusNext();
-				event.preventDefault();
-				break;
-			case 'End':
-				focusLast();
-				break;
-			case 'Home':
-				focusFirst();
-				break;
+		let { key } = event;
+
+		let keys = {
+			'ArrowUp': focusPrevious,
+			'ArrowDown': focusNext,
+			'End': focusLast,
+			'Home': focusFirst,
+		};
+
+		if (!Object.prototype.hasOwnProperty.call(keys, key)) {
+			return;
 		}
+
+		keys[key]();
+		event.preventDefault();
 	}
 
 	/**
 	 * Animates the height of an element between two values.
 	 *
-	 * @param {HTMLElement} element - The element to animate.
-	 * @param {number} start - The start height of the element.
-	 * @param {number} end - The end height of the element.
+	 * @param element - The element to animate.
+	 * @param start - The start height of the element.
+	 * @param end - The end height of the element.
 	 */
 	function animateHeight(element, start, end) {
 		window.requestAnimationFrame(() => {
@@ -483,7 +497,11 @@ export function accordion(id, options) {
 			return;
 		}
 
-		const element = event.currentTarget;
+		let element = event.currentTarget;
+
+		if (!(element instanceof HTMLElement)) {
+			return;
+		}
 
 		if (getInnerHeight(element) === 0) {
 			element.style.display = 'none';
@@ -492,23 +510,13 @@ export function accordion(id, options) {
 		element.style.height = '';
 
 		element.removeEventListener('transitionend', onTransitionend);
-
-		function getInnerHeight(element) {
-			const style = window.getComputedStyle(element);
-
-			let height = parseInt(style.getPropertyValue('height'));
-			let paddingTop = parseInt(style.getPropertyValue('padding-top'), 10);
-			let paddingBottom = parseInt(style.getPropertyValue('padding-bottom'), 10);
-
-			return height - paddingTop - paddingBottom;
-		}
 	}
 
 	/**
 	 * Wrapper method to add an event listener.
 	 *
-	 * @param {string} type - The event name.
-	 * @param {Function} handler - Callback function to handle the event.
+	 * @param type - The event name.
+	 * @param handler - Callback function to handle the event.
 	 */
 	function on(type, handler) {
 		let prefixedName = getPrefixedEventName(type);
@@ -522,8 +530,8 @@ export function accordion(id, options) {
 	/**
 	 * Wrapper method to remove an event listener.
 	 *
-	 * @param {string} type - The event name.
-	 * @param {Function} handler - Callback function to handle the event.
+	 * @param type - The event name.
+	 * @param handler - Callback function to handle the event.
 	 */
 	function off(type, handler) {
 		element.removeEventListener(getPrefixedEventName(type), handler);
@@ -532,20 +540,20 @@ export function accordion(id, options) {
 	/**
 	 * Dispatches a custom event.
 	 *
-	 * @param {string} name - The event name.
+	 * @param name - The event name.
 	 * @param options
-	 * @returns {boolean} False if preventDefault() was called, true otherwise.
+	 * @returns False if preventDefault() was called, true otherwise.
 	 */
 	function emit(name, options = {}) {
-		const defaultOptions = {
+		const defaults = {
 			bubbles: true,
 			cancelable: false,
 		};
 
-		let event = new CustomEvent(
-			getPrefixedEventName(name),
-			{ ...defaultOptions, ...options }
-		);
+		let event = new CustomEvent(getPrefixedEventName(name), {
+			...defaults,
+			...options,
+		});
 
 		return element.dispatchEvent(event);
 	}
@@ -553,14 +561,14 @@ export function accordion(id, options) {
 	/**
 	 * Returns the given event name with the event prefix.
 	 *
-	 * @param {string} name The event name
-	 * @returns {string} The prefixed even name
+	 * @param name The event name
+	 * @returns The prefixed event name
 	 */
 	function getPrefixedEventName(name) {
 		return `accordion:${name};`
 	}
 
-	const instance = {
+	return instances[id] = {
 		on,
 		off,
 		init,
@@ -575,6 +583,4 @@ export function accordion(id, options) {
 		getItem,
 		items,
 	};
-
-	return instances[id] = instance;
 }
