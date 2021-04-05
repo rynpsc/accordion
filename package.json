@@ -9,9 +9,10 @@
     "dist",
     "README.md"
   ],
+  "types": "dist/index.d.ts",
   "scripts": {
     "dev": "rollup -c -w",
-    "build": "rimraf dist && rollup -c",
+    "build": "rimraf dist && rollup -c && tsc --declaration --emitDeclarationOnly",
     "prepare": "npm run build"
   },
   "repository": {
@@ -25,7 +26,8 @@
   "author": "Ryan Pascoe",
   "license": "MIT",
   "devDependencies": {
+    "@rollup/plugin-typescript": "^8.2.1",
     "rimraf": "^3.0.2",
-    "rollup": "^2.6.1"
+    "rollup": "^2.44.0"
   }
 }

@@ -1,12 +1,11 @@
 /**
  * Wraps a number at a given value.
  *
- * @param x
- * @param array
+ * @param x Value to wrap
+ * @param n The maximum value
  */
-export function modulo(x, array) {
-	let l = array.length;
-	return ((x % l) + l) % l;
+ export function modulo(x: number, n: number) {
+	return ((x % n) + n) % n;
 }
 
 /**
@@ -15,8 +14,8 @@ export function modulo(x, array) {
  * @param element
  * @returns The elements height
  */
-export function getInnerHeight(element) {
-	const style = window.getComputedStyle(element);
+export function getInnerHeight(element: HTMLElement) {
+	let style = window.getComputedStyle(element);
 
 	let height = parseInt(style.getPropertyValue('height'), 10);
 	let paddingTop = parseInt(style.getPropertyValue('padding-top'), 10);

@@ -1,9 +1,21 @@
+import { defaults } from './defaults';
 import { getInnerHeight, modulo } from './utils';
+import {
+	Accordion,
+	AccordionItem,
+	AccordionItemEvent,
+	EventMap,
+	OpenCloseOptions,
+	Options,
+	Target,
+} from './types';
 
-export const instances = {};
+export const instances: {
+	[id: string]: Accordion | undefined;
+} = {};
 
-export function getInstanceById(id) {
-	if (!Object.prototype.hasOwnProperty.call(instances, id)) {
+export function getInstanceById(id: string) {
+	if (!(Object.prototype.hasOwnProperty.call(instances, id))) {
 		return undefined;
 	}
 
@@ -14,19 +26,12 @@ export function getInstanceById(id) {
  * @param id - The ID of the containing HTMLElement.
  * @param options
  */
-export function accordion(id, options = {}) {
-	const config = { ...{
-		initialisedClass: '',
-		activePanelClass: '',
-		activeTriggerClass: '',
-		triggerClass: true,
-		animate: true,
-		multiselect: true,
-	}, ...options };
+export function accordion(id: string, options: Partial<Options> = {}): Accordion | undefined {
+	const config = { ...defaults, ...options };
 
-	const element = document.getElementById(id);
+	const element = <HTMLElement>document.getElementById(id);
 
-	if (!element) {
+	if (element === null) {
 		return;
 	}
 
@@ -36,21 +41,12 @@ export function accordion(id, options = {}) {
 
 	let initialised = false;
 
-	const events = {};
+	let activeIds: string[] = [];
+	let items: AccordionItem[] = [];
+	let events: { [id: string]: Array<(listener: AccordionItemEvent | CustomEvent) => any> } = {};
 
-	const items = [];
-	const activeIds = [];
-
-	/**
-	 * Gets an accordion items index by either it's numerical index or id.
-	 *
-	 * @param target The items id or index
-	 * @returns The value passed in if it's a number or the
-	 * index of the first item with the matching ID if passed a string,
-	 * -1 otherwise.
-	 */
-	 function getItemIndex(target) {
-		let index;
+	function getItemIndex(target: Target) {
+		let index: number;
 
 		if (typeof target === 'number') {
 			index = target;
@@ -61,12 +57,7 @@ export function accordion(id, options = {}) {
 		return index;
 	}
 
-	/**
-	 * Gets an accordion item by either it's numerical index or id.
-	 *
-	 * @param target The items id or index
-	 */
-	function getItem(target) {
+	function getItem(target: Target) {
 		let index = getItemIndex(target);
 
 		if (index === -1) {
@@ -90,6 +81,10 @@ export function accordion(id, options = {}) {
 
 			let item = addItem(header);
 
+			if (item === undefined) {
+				return;
+			}
+
 			if (header.dataset.expanded !== undefined) {
 				item.open({ animate: false });
 			}
@@ -107,10 +102,19 @@ export function accordion(id, options = {}) {
 		}
 	}
 
-	function addItem(element) {
-		let id = element.dataset.for;
+	function addItem(element: HTMLElement) {
+		let id = <string>element.dataset.for;
+
+		if (id === undefined) {
+			return;
+		}
+
 		let panel = document.getElementById(id);
 		let control = document.createElement('button');
+
+		if (panel === null) {
+			return;
+		}
 
 		control.type = 'button';
 		control.id = `${ id }-label`;
@@ -137,7 +141,7 @@ export function accordion(id, options = {}) {
 		panel.setAttribute('role', 'region');
 		panel.setAttribute('aria-labelledby', `${ id }-label`);
 
-		let item = {
+		let item: AccordionItem = {
 			id,
 			panel,
 			control,
@@ -145,8 +149,8 @@ export function accordion(id, options = {}) {
 			disabled: false,
 			enable: () => enable(id),
 			disable: () => disable(id),
-			open: (options) => _expand(id, options),
-			close: (options) => _collapse(id, options),
+			open: (options: OpenCloseOptions = {} ) => _expand(id, options),
+			close: (options: OpenCloseOptions = {} ) => _collapse(id, options),
 		};
 
 		items.push(item);
@@ -154,10 +158,6 @@ export function accordion(id, options = {}) {
 		return item;
 	}
 
-	/**
-	 * Removes any classes or attributes added in `init` and removes any
-	 * registered event listeners added via the `on` method.
-	 */
 	function destroy() {
 		if (!initialised) {
 			return;
@@ -169,7 +169,7 @@ export function accordion(id, options = {}) {
 
 		items.forEach(item => {
 			let controlHtml = item.control.innerHTML;
-			let controlParent = item.control.parentNode;
+			let controlParent = <HTMLElement>item.control.parentNode;
 
 			if (config.activeTriggerClass) {
 				item.control.classList.remove(config.activeTriggerClass);
@@ -198,8 +198,8 @@ export function accordion(id, options = {}) {
 
 		emit('destroy');
 
-		for (const [ name, handlers ] of Object.entries(events)) {
-			handlers.forEach(handler => off(name, handler));
+		for (let [name, handlers] of Object.entries(events)) {
+			handlers.forEach(handler => off(<keyof EventMap>name, handler));
 
 			delete events[name];
 		}
@@ -207,40 +207,23 @@ export function accordion(id, options = {}) {
 		initialised = false;
 	}
 
-	/**
-	 * Focus the next accordion control.
-	 */
 	function focusNext() {
 		shiftFocus(1);
 	}
 
-	/**
-	 * Focus the previous accordion control.
-	 */
 	function focusPrevious() {
 		shiftFocus(-1);
 	}
 
-	/**
-	 * Focus the first accordion control.
-	 */
 	function focusFirst() {
 		items[0].control.focus();
 	}
 
-	/**
-	 * Focus the last accordion control.
-	 */
 	function focusLast() {
 		items[items.length - 1].control.focus();
 	}
 
-	/**
-	 * Shifts focus by the given amount relative to the currently focused control.
-	 *
-	 * @param step
-	 */
-	function shiftFocus(step) {
+	function shiftFocus(step: number) {
 		let active = document.activeElement;
 		let activeIndex = items.findIndex(item => item.control === active);
 
@@ -250,44 +233,26 @@ export function accordion(id, options = {}) {
 
 		let newIndex = activeIndex + step;
 
-		items[modulo(newIndex, items)].control.focus();
+		items[modulo(newIndex, items.length)].control.focus();
 	}
 
-	/**
-	 * Expand an accordion item.
-	 *
-	 * @param target The items id or index
-	 * @param options
-	 */
-		 function open(target, options = {}) {
-			if (!Array.isArray(target)) {
-				_expand(target, options);
-			} else {
-				target.forEach(id => _expand(id, options));
-			}
+	function open(target: Target | Target[], options: OpenCloseOptions = {}) {
+		if (!Array.isArray(target)) {
+			_expand(target, options);
+		} else {
+			target.forEach(id => _expand(id, options));
 		}
+	}
 
-		/**
-		 * Collapse an accordion item.
-		 *
-		 * @param target The items id or index
-		 * @param options
-		 */
-		function close(target, options = {}) {
-			if (!Array.isArray(target)) {
-				_collapse(target, options);
-			} else {
-				target.forEach(id => _collapse(id, options));
-			}
+	function close(target: Target | Target[], options: OpenCloseOptions = {}) {
+		if (!Array.isArray(target)) {
+			_collapse(target, options);
+		} else {
+			target.forEach(id => _collapse(id, options));
 		}
+	}
 
-	/**
-	 * Toggle the panel with the provided ID.
-	 *
-	 * @param target The id or index of the panel to toggle
-	 * @param options
-	 */
-	function toggle(target, options = {}) {
+	function toggle(target: Target, options: OpenCloseOptions = {}) {
 		let item = getItem(target);
 
 		if (item === undefined) {
@@ -297,26 +262,15 @@ export function accordion(id, options = {}) {
 		item.active ? item.close(options) : item.open(options);
 	}
 
-	/**
-	 * Open all panels.
-	 */
 	function openAll() {
-		items.forEach(item => item.open({ animate: false, multiselect: true }));
+		items.forEach(item => item.open(<OpenCloseOptions>{ animate: false, multiselect: true }));
 	}
 
-	/**
-	 * Close all panels.
-	 */
 	function closeAll() {
 		items.forEach(item => item.close({ animate: false }));
 	}
 
-	/**
-	 * Enable a panel, allowing it to be collapsed or expanded.
-	 *
-	 * @param target The id or index of the panel to enable
-	 */
-	function enable(target) {
+	function enable(target: Target) {
 		let item = getItem(target);
 
 		if (item === undefined) {
@@ -331,12 +285,7 @@ export function accordion(id, options = {}) {
 		item.control.setAttribute('aria-disabled', 'false');
 	}
 
-	/**
-	 * Disable a panel, preventing it from being collapsed or expanded.
-	 *
-	 * @param target The id or index of the panel to disable
-	 */
-	function disable(target) {
+	function disable(target: Target) {
 		let item = getItem(target);
 
 		if (item === undefined) {
@@ -351,14 +300,7 @@ export function accordion(id, options = {}) {
 		item.control.setAttribute('aria-disabled', 'true');
 	}
 
-	/**
-	 * Expand the panel with the provided ID.
-	 *
-	 * @param target
-	 * @param animate
-	 * @param multiselect
-	 */
-	function _expand(target, { animate = config.animate, multiselect = config.multiselect } = {}) {
+	function _expand(target: Target, { animate = config.animate, multiselect = config.multiselect } = {}) {
 		let item = getItem(target);
 
 		if (item === undefined || item.active || item.disabled) {
@@ -401,12 +343,7 @@ export function accordion(id, options = {}) {
 		activeIds.push(item.id);
 	}
 
-	/**
-	 * Collapse the panel with the provided ID.
-	 *
-	 * @param target
-	 */
-	function _collapse(target, { animate = config.animate } = {}) {
+	function _collapse(target: Target, { animate = config.animate } = {}) {
 		let item = getItem(target);
 
 		if (item === undefined || !item.active || item.disabled) {
@@ -441,25 +378,28 @@ export function accordion(id, options = {}) {
 		}
 	}
 
-	/**
-	 * Handles the header click event.
-	 *
-	 * @param event
-	 */
-	function onHeaderClick(event) {
+	function onHeaderClick(event: MouseEvent) {
 		event.preventDefault();
-		toggle(event.currentTarget.getAttribute('aria-controls'));
+
+		let element = event.currentTarget;
+
+		if (!(element instanceof HTMLElement)) {
+			return;
+		}
+
+		let target = element.getAttribute('aria-controls');
+
+		if (target === null) {
+			return;
+		}
+
+		toggle(target);
 	}
 
-	/**
-	 * Handles the header keydown event.
-	 *
-	 * @param event
-	 */
-	function onHeaderKeydown(event) {
+	function onHeaderKeydown(event: KeyboardEvent) {
 		let { key } = event;
 
-		let keys = {
+		let keys:{ [index: string]: () => any } = {
 			'ArrowUp': focusPrevious,
 			'ArrowDown': focusNext,
 			'End': focusLast,
@@ -481,7 +421,7 @@ export function accordion(id, options = {}) {
 	 * @param start - The start height of the element.
 	 * @param end - The end height of the element.
 	 */
-	function animateHeight(element, start, end) {
+	function animateHeight(element: HTMLElement, start: number, end: number) {
 		window.requestAnimationFrame(() => {
 			element.style.height = `${ start }px`;
 
@@ -492,7 +432,7 @@ export function accordion(id, options = {}) {
 		});
 	}
 
-	function onTransitionend(event) {
+	function onTransitionend(event: TransitionEvent) {
 		if (event.propertyName !== 'height') {
 			return;
 		}
@@ -512,45 +452,33 @@ export function accordion(id, options = {}) {
 		element.removeEventListener('transitionend', onTransitionend);
 	}
 
-	/**
-	 * Wrapper method to add an event listener.
-	 *
-	 * @param type - The event name.
-	 * @param handler - Callback function to handle the event.
-	 */
-	function on(type, handler) {
+	function on<K extends keyof EventMap>(type: K, listener: (listener: EventMap[K]) => any) {
 		let prefixedName = getPrefixedEventName(type);
 
-		element.addEventListener(prefixedName, handler);
+		element.addEventListener(prefixedName, listener as EventListener);
 
 		// Track event listeners to remove when calling destroy.
-		(events[prefixedName] || (events[prefixedName] = [])).push(handler);
+		(events[prefixedName] || (events[prefixedName] = [])).push(listener);
+	}
+
+	function off<K extends keyof EventMap>(type: K, listener: (listener: EventMap[K]) => any) {
+		element.removeEventListener(getPrefixedEventName(type), listener as EventListener);
 	}
 
 	/**
-	 * Wrapper method to remove an event listener.
+	 * Dispatches an event.
 	 *
-	 * @param type - The event name.
-	 * @param handler - Callback function to handle the event.
-	 */
-	function off(type, handler) {
-		element.removeEventListener(getPrefixedEventName(type), handler);
-	}
-
-	/**
-	 * Dispatches a custom event.
-	 *
-	 * @param name - The event name.
+	 * @param type - The event type.
 	 * @param options
 	 * @returns False if preventDefault() was called, true otherwise.
 	 */
-	function emit(name, options = {}) {
-		const defaults = {
+	function emit(type: string, options = {}) {
+		let defaults = {
 			bubbles: true,
 			cancelable: false,
 		};
 
-		let event = new CustomEvent(getPrefixedEventName(name), {
+		let event = new CustomEvent(getPrefixedEventName(type), {
 			...defaults,
 			...options,
 		});
@@ -564,7 +492,7 @@ export function accordion(id, options = {}) {
 	 * @param name The event name
 	 * @returns The prefixed event name
 	 */
-	function getPrefixedEventName(name) {
+	function getPrefixedEventName(name: string) {
 		return `accordion:${name};`
 	}
 
