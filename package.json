@@ -5,9 +5,7 @@
   "main": "dist/accordion.cjs.js",
   "module": "dist/accordion.es.js",
   "files": [
-    "src",
-    "dist",
-    "README.md"
+    "dist"
   ],
   "types": "dist/index.d.ts",
   "scripts": {
