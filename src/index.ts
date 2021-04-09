@@ -322,7 +322,7 @@ export function accordion(id: string, options: Partial<Options> = {}): Accordion
 			item.control.classList.add(config.activeTriggerClass);
 		}
 
-		if (!animate) {
+		if (!animate || !hasHeightTransition(item.panel)) {
 			item.panel.style.height = '';
 			item.panel.style.display = 'block';
 		} else {
@@ -365,7 +365,7 @@ export function accordion(id: string, options: Partial<Options> = {}): Accordion
 			item.control.classList.remove(config.activeTriggerClass);
 		}
 
-		if (!animate) {
+		if (!animate || !hasHeightTransition(item.panel)) {
 			item.panel.style.display = 'none';
 		} else {
 			animateHeight(item.panel, item.panel.clientHeight, 0);
@@ -412,6 +412,17 @@ export function accordion(id: string, options: Partial<Options> = {}): Accordion
 
 		keys[key]();
 		event.preventDefault();
+	}
+
+	/**
+	 * Test if an Element has a height transition with a non zero duration.
+	 */
+	function hasHeightTransition(element: Element) {
+		let style = window.getComputedStyle(element);
+		let property = style.getPropertyValue('transition-property');
+		let duration = parseFloat(style.getPropertyValue('transition-duration'));
+
+		return duration > 0 && ['all', 'height'].includes(property);
 	}
 
 	/**
