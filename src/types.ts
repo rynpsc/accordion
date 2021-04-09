@@ -95,6 +95,7 @@ export interface AccordionItem {
 	 * The item id, this is the id used to link the header and panel
 	 */
 	id: string;
+
 	/**
 	 * The element that controls the opening and closing of the associated panel
 	 */
