@@ -4,6 +4,7 @@ import {
 	Accordion,
 	AccordionItem,
 	AccordionItemEvent,
+	EventFunctionSignature,
 	EventMap,
 	OpenCloseOptions,
 	Options,
@@ -463,7 +464,7 @@ export function accordion(id: string, options: Partial<Options> = {}): Accordion
 		element.removeEventListener('transitionend', onTransitionend);
 	}
 
-	function on<K extends keyof EventMap>(type: K, listener: (listener: EventMap[K]) => any) {
+	let on: EventFunctionSignature = function(type, listener) {
 		let prefixedName = getPrefixedEventName(type);
 
 		element.addEventListener(prefixedName, listener as EventListener);
@@ -472,7 +473,7 @@ export function accordion(id: string, options: Partial<Options> = {}): Accordion
 		(events[prefixedName] || (events[prefixedName] = [])).push(listener);
 	}
 
-	function off<K extends keyof EventMap>(type: K, listener: (listener: EventMap[K]) => any) {
+	let off: EventFunctionSignature = function (type, listener) {
 		element.removeEventListener(getPrefixedEventName(type), listener as EventListener);
 	}
 

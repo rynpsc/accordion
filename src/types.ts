@@ -13,6 +13,10 @@ export interface AccordionItemEvent extends CustomEvent {
 	detail: AccordionItem;
 }
 
+export interface EventFunctionSignature {
+	<K extends keyof EventMap>(type: K, listener: (event: EventMap[K]) => any): void;
+}
+
 export interface Accordion {
 	init(): void;
 	destroy(): void;
@@ -24,7 +28,7 @@ export interface Accordion {
 	 * @param type The event type
 	 * @param listener - Callback function to handle the event.
 	 */
-	on<K extends keyof EventMap>(type: K, listener: (event: EventMap[K]) => any): void;
+	on: EventFunctionSignature;
 
 	/**
 	 * Remove an event listener.
@@ -32,7 +36,7 @@ export interface Accordion {
 	 * @param type The event type
 	 * @param listener - Callback function to handle the event.
 	 */
-	off<K extends keyof EventMap>(type: K, listener: (event: EventMap[K]) => any): void;
+	off: EventFunctionSignature;
 
 	/**
 	 * Expand an accordion item.
