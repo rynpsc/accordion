@@ -114,7 +114,7 @@ export interface AccordionItem {
 	/**
 	 * The element that controls the opening and closing of the associated panel.
 	 */
-	control: HTMLButtonElement;
+	button: HTMLButtonElement;
 
 	/**
 	 * The element associated with the the control.
@@ -175,12 +175,12 @@ export interface Options {
 	/**
 	 * Class to add to the active trigger.
 	 */
-	activeTriggerClass: string;
+	activeHeaderClass: string;
 
 	/**
 	 * Class to add to the generated header button.
 	 */
-	triggerClass: true | string | undefined;
+	headerButtonClass: string;
 
 	/**
 	 * Animate the opening and closing of panels.

@@ -111,32 +111,29 @@ export function accordion(id: string, options: Partial<Options> = {}): Accordion
 		}
 
 		let panel = document.getElementById(id);
-		let control = document.createElement('button');
+		let button = document.createElement('button');
 
 		if (panel === null) {
 			return;
 		}
 
-		control.type = 'button';
-		control.id = `${ id }-label`;
+		button.type = 'button';
+		button.id = `${ id }-label`;
 
-		if (config.triggerClass === true) {
-			control.className = element.className;
-			element.className = '';
-		} else if (typeof config.triggerClass === 'string') {
-			control.className = config.triggerClass;
+		if (config.headerButtonClass) {
+			button.className = config.headerButtonClass;
 		}
 
-		control.innerHTML = element.innerHTML;
+		button.innerHTML = element.innerHTML;
 
 		element.innerHTML = '';
-		element.appendChild(control);
+		element.appendChild(button);
 
-		control.setAttribute('aria-controls', id);
-		control.setAttribute('aria-expanded', 'false');
+		button.setAttribute('aria-controls', id);
+		button.setAttribute('aria-expanded', 'false');
 
-		control.addEventListener('click', onHeaderClick);
-		control.addEventListener('keydown', onHeaderKeydown);
+		button.addEventListener('click', onHeaderClick);
+		button.addEventListener('keydown', onHeaderKeydown);
 
 		panel.style.display = 'none';
 		panel.setAttribute('role', 'region');
@@ -145,7 +142,7 @@ export function accordion(id: string, options: Partial<Options> = {}): Accordion
 		let item: AccordionItem = {
 			id,
 			panel,
-			control,
+			button,
 			header: element,
 			active: false,
 			disabled: false,
@@ -170,18 +167,18 @@ export function accordion(id: string, options: Partial<Options> = {}): Accordion
 		}
 
 		items.forEach(item => {
-			let controlHtml = item.control.innerHTML;
-			let controlParent = <HTMLElement>item.control.parentNode;
+			let controlHtml = item.button.innerHTML;
+			let controlParent = <HTMLElement>item.button.parentNode;
 
-			if (config.activeTriggerClass) {
-				item.control.classList.remove(config.activeTriggerClass);
+			if (config.activeHeaderClass) {
+				item.button.classList.remove(config.activeHeaderClass);
 			}
 
-			if (config.triggerClass === true) {
-				controlParent.className = item.control.className;
+			if (config.headerButtonClass) {
+				controlParent.className = item.button.className;
 			}
 
-			item.control.remove();
+			item.button.remove();
 			controlParent.innerHTML = controlHtml;
 
 			['role', 'style', 'aria-labelledby'].forEach(attribute => {
@@ -218,16 +215,16 @@ export function accordion(id: string, options: Partial<Options> = {}): Accordion
 	}
 
 	function focusFirst() {
-		items[0].control.focus();
+		items[0].button.focus();
 	}
 
 	function focusLast() {
-		items[items.length - 1].control.focus();
+		items[items.length - 1].button.focus();
 	}
 
 	function shiftFocus(step: number) {
 		let active = document.activeElement;
-		let activeIndex = items.findIndex(item => item.control === active);
+		let activeIndex = items.findIndex(item => item.button === active);
 
 		if (activeIndex === -1) {
 			return false;
@@ -235,7 +232,7 @@ export function accordion(id: string, options: Partial<Options> = {}): Accordion
 
 		let newIndex = activeIndex + step;
 
-		items[modulo(newIndex, items.length)].control.focus();
+		items[modulo(newIndex, items.length)].button.focus();
 	}
 
 	function open(target: Target | Target[], options: OpenCloseOptions = {}) {
@@ -284,7 +281,7 @@ export function accordion(id: string, options: Partial<Options> = {}): Accordion
 		}
 
 		item.disabled = false;
-		item.control.setAttribute('aria-disabled', 'false');
+		item.button.setAttribute('aria-disabled', 'false');
 	}
 
 	function disable(target: Target) {
@@ -299,7 +296,7 @@ export function accordion(id: string, options: Partial<Options> = {}): Accordion
 		}
 
 		item.disabled = true;
-		item.control.setAttribute('aria-disabled', 'true');
+		item.button.setAttribute('aria-disabled', 'true');
 	}
 
 	function _expand(target: Target, { animate = config.animate, multiselect = config.multiselect } = {}) {
@@ -314,14 +311,16 @@ export function accordion(id: string, options: Partial<Options> = {}): Accordion
 		}
 
 		item.active = true;
-		item.control.setAttribute('aria-expanded', 'true');
+		item.button.setAttribute('aria-expanded', 'true');
 
-		if (config.activePanelClass) {
-			item.panel.classList.add(config.activePanelClass);
+		let { activePanelClass, activeHeaderClass } = config;
+
+		if (activePanelClass) {
+			item.panel.classList.add(activePanelClass);
 		}
 
-		if (config.activeTriggerClass) {
-			item.control.classList.add(config.activeTriggerClass);
+		if (activeHeaderClass) {
+			item.button.classList.add(activeHeaderClass);
 		}
 
 		if (!animate || !hasHeightTransition(item.panel)) {
@@ -357,14 +356,14 @@ export function accordion(id: string, options: Partial<Options> = {}): Accordion
 		}
 
 		item.active = false;
-		item.control.setAttribute('aria-expanded', 'false');
+		item.button.setAttribute('aria-expanded', 'false');
 
 		if (config.activePanelClass) {
 			item.panel.classList.remove(config.activePanelClass);
 		}
 
-		if (config.activeTriggerClass) {
-			item.control.classList.remove(config.activeTriggerClass);
+		if (config.activeHeaderClass) {
+			item.button.classList.remove(config.activeHeaderClass);
 		}
 
 		if (!animate || !hasHeightTransition(item.panel)) {

@@ -3,8 +3,8 @@ import { Options } from './types';
 export const defaults: Options = {
 	initialisedClass: '',
 	activePanelClass: '',
-	activeTriggerClass: '',
-	triggerClass: true,
+	activeHeaderClass: '',
+	headerButtonClass: '',
 	animate: true,
 	multiselect: true,
 };
