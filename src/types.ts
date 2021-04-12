@@ -18,8 +18,19 @@ export interface EventFunctionSignature {
 }
 
 export interface Accordion {
+	/**
+	 * Initialises the instance.
+	 */
 	init(): void;
+
+	/**
+	 * Restores the DOM changed in the `init` method and removes any registered event listeners added via the `on` method.
+	 */
 	destroy(): void;
+
+	/**
+	 * Array of AccordionItem Objects.
+	 */
 	items: AccordionItem[];
 
 	/**
@@ -96,17 +107,17 @@ export interface Accordion {
 
 export interface AccordionItem {
 	/**
-	 * The item id, this is the id used to link the header and panel
+	 * The item id, this is the id used to link the header and panel.
 	 */
 	id: string;
 
 	/**
-	 * The element that controls the opening and closing of the associated panel
+	 * The element that controls the opening and closing of the associated panel.
 	 */
 	control: HTMLButtonElement;
 
 	/**
-	 * The element associated with the the control
+	 * The element associated with the the control.
 	 */
 	panel: HTMLElement;
 
@@ -116,27 +127,27 @@ export interface AccordionItem {
 	active: boolean;
 
 	/**
-	 * Indicates if the item is disabled
+	 * Indicates if the item is disabled.
 	 */
 	disabled: boolean;
 
 	/**
-	 * Enable the item
+	 * Enable the item, allowing it to be opened and closed.
 	 */
 	enable(): void;
 
 	/**
-	 * Disable the item
+	 * Disable the item, disallowing it to be opened and closed.
 	 */
 	disable(): void;
 
 	/**
-	 * Open the item
+	 * Open the items panel.
 	 */
 	open(options?: OpenCloseOptions): void;
 
 	/**
-	 * Close the item
+	 * Close the items panel.
 	 */
 	close(options?: OpenCloseOptions): void;
 }
@@ -152,12 +163,12 @@ export interface Options {
 	initialisedClass: string;
 
 	/**
-	 * Class to add active panel
+	 * Class to add to the active panel
 	 */
 	activePanelClass: string;
 
 	/**
-	 * Class to add to active trigger.
+	 * Class to add to the active trigger.
 	 */
 	activeTriggerClass: string;
 
@@ -172,7 +183,7 @@ export interface Options {
 	animate: boolean;
 
 	/**
-	 * Allow multiple panels to expanded at once.
+	 * Allow multiple panels to be expanded at once.
 	 */
 	multiselect: boolean;
 }
