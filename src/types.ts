@@ -122,7 +122,12 @@ export interface AccordionItem {
 	panel: HTMLElement;
 
 	/**
-	 * Indicates if the item is open
+	 * The header original header element.
+	 */
+	header: HTMLElement;
+
+	/**
+	 * Indicates if the item is open.
 	 */
 	active: boolean;
 

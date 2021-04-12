@@ -146,6 +146,7 @@ export function accordion(id: string, options: Partial<Options> = {}): Accordion
 			id,
 			panel,
 			control,
+			header: element,
 			active: false,
 			disabled: false,
 			enable: () => enable(id),
