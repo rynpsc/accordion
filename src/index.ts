@@ -320,7 +320,7 @@ export function accordion(id: string, options: Partial<Options> = {}): Accordion
 		}
 
 		if (activeHeaderClass) {
-			item.button.classList.add(activeHeaderClass);
+			item.header.classList.add(activeHeaderClass);
 		}
 
 		if (!animate || !hasHeightTransition(item.panel)) {
@@ -363,7 +363,7 @@ export function accordion(id: string, options: Partial<Options> = {}): Accordion
 		}
 
 		if (config.activeHeaderClass) {
-			item.button.classList.remove(config.activeHeaderClass);
+			item.header.classList.remove(config.activeHeaderClass);
 		}
 
 		if (!animate || !hasHeightTransition(item.panel)) {
