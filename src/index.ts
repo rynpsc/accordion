@@ -96,7 +96,7 @@ export function accordion(id: string, options: Partial<Options> = {}): Accordion
 		});
 
 		initialised = true;
-		emit('initialised');
+		emit('init');
 
 		if (config.initialisedClass) {
 			element.classList.add(config.initialisedClass);

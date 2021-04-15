@@ -5,7 +5,7 @@ export interface EventMap {
 	'close': AccordionItemEvent;
 	'enable': AccordionItemEvent;
 	'disable': AccordionItemEvent;
-	'create': CustomEvent;
+	'init': CustomEvent;
 	'destroy': CustomEvent;
 }
 
