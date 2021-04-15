@@ -484,7 +484,7 @@ export function accordion(id: string, options: Partial<Options> = {}): Accordion
 	 * @param options
 	 * @returns False if preventDefault() was called, true otherwise.
 	 */
-	function emit(type: string, options = {}) {
+	function emit(type: keyof EventMap, options = {}) {
 		let defaults = {
 			bubbles: true,
 			cancelable: false,
