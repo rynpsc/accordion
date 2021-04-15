@@ -397,7 +397,7 @@ export function accordion(id: string, options: Partial<Options> = {}): Accordion
 		toggle(target);
 	}
 
-	function onHeaderKeydown(event: KeyboardEvent) {
+	function onHeaderKeydown(event: KeyboardEvent, id: string) {
 		let { key } = event;
 
 		let keys:{ [index: string]: () => any } = {
@@ -405,6 +405,8 @@ export function accordion(id: string, options: Partial<Options> = {}): Accordion
 			'ArrowDown': focusNext,
 			'End': focusLast,
 			'Home': focusFirst,
+			'Enter': () => toggle(id),
+			'Space': () => toggle(id),
 		};
 
 		if (!Object.prototype.hasOwnProperty.call(keys, key)) {
