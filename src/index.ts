@@ -132,8 +132,8 @@ export function accordion(id: string, options: Partial<Options> = {}): Accordion
 		button.setAttribute('aria-controls', id);
 		button.setAttribute('aria-expanded', 'false');
 
-		button.addEventListener('click', onHeaderClick);
-		button.addEventListener('keydown', onHeaderKeydown);
+		button.addEventListener('click', event => onHeaderClick(event, id));
+		button.addEventListener('keydown', event => onHeaderKeydown(event, id));
 
 		panel.style.display = 'none';
 		panel.setAttribute('role', 'region');
@@ -379,22 +379,10 @@ export function accordion(id: string, options: Partial<Options> = {}): Accordion
 		}
 	}
 
-	function onHeaderClick(event: MouseEvent) {
+	function onHeaderClick(event: MouseEvent, id: string) {
 		event.preventDefault();
 
-		let element = event.currentTarget;
-
-		if (!(element instanceof HTMLElement)) {
-			return;
-		}
-
-		let target = element.getAttribute('aria-controls');
-
-		if (target === null) {
-			return;
-		}
-
-		toggle(target);
+		toggle(id);
 	}
 
 	function onHeaderKeydown(event: KeyboardEvent, id: string) {
