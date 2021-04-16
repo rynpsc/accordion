@@ -499,6 +499,7 @@ export function accordion(id: string, options: Partial<Options> = {}): Accordion
 	}
 
 	return instances[id] = {
+		id,
 		on,
 		off,
 		init,

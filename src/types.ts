@@ -19,6 +19,11 @@ export interface EventFunctionSignature {
 
 export interface Accordion {
 	/**
+	 * The instance id
+	 */
+	id: string
+
+	/**
 	 * Initialises the instance.
 	 */
 	init(): void;
