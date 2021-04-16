@@ -2,7 +2,7 @@
 	"name": "@rynpsc/accordion",
 	"description": "A lightweight, accessible accordion",
 	"version": "1.1.0",
-	"main": "dist/cjs/accordion.js",
+	"main": "dist/commonjs/accordion.js",
 	"module": "dist/module/accordion.js",
 	"unpkg": "dist/umd/accordion.js",
 	"types": "dist/types/index.d.ts",
@@ -17,8 +17,8 @@
 		"accessibility"
 	],
 	"scripts": {
-		"dev": "rollup -c -w",
-		"build": "rimraf dist && rollup -c && tsc --declaration --emitDeclarationOnly",
+		"dev": "rimraf rollup -c -w",
+		"build": "rimraf dist && rollup -c --environment BUILD:production && tsc --declaration --emitDeclarationOnly",
 		"prepare": "npm run build"
 	},
 	"devDependencies": {
