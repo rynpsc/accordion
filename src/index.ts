@@ -407,6 +407,12 @@ export function accordion(id: string, options: Partial<Options> = {}): Accordion
 
 	/**
 	 * Test if an Element has a height transition with a non zero duration.
+	 *
+	 * A panel may not have a CSS height transition set or its duration may be
+	 * zero. In these scenarios either the transitionEnd event is not fired,
+	 * event.propertyName is never equal to ‘height’, or the event may be fired
+	 * before we can catch it. We therefore need to check that the panel
+	 * will animate.
 	 */
 	function hasHeightTransition(element: Element) {
 		let style = window.getComputedStyle(element);
