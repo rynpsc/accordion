@@ -29,6 +29,18 @@ export interface Accordion {
 	root: HTMLElement;
 
 	/**
+	 * Array of AccordionItem Objects.
+	 */
+	items: AccordionItem[];
+
+	/**
+	 * Gets an accordion item by either it's numerical index or id.
+	 *
+	 * @param target The items id or index
+	 */
+	getItem(target: Target): AccordionItem | undefined;
+
+	/**
 	 * Initialises the instance.
 	 */
 	init(): void;
@@ -37,27 +49,6 @@ export interface Accordion {
 	 * Restores the DOM changed in the `init` method and removes any registered event listeners added via the `on` method.
 	 */
 	destroy(): void;
-
-	/**
-	 * Array of AccordionItem Objects.
-	 */
-	items: AccordionItem[];
-
-	/**
-	 * Add an event listener.
-	 *
-	 * @param type The event type
-	 * @param listener - Callback function to handle the event.
-	 */
-	on: EventFunctionSignature;
-
-	/**
-	 * Remove an event listener.
-	 *
-	 * @param type The event type
-	 * @param listener - Callback function to handle the event.
-	 */
-	off: EventFunctionSignature;
 
 	/**
 	 * Expand an accordion item.
@@ -84,6 +75,16 @@ export interface Accordion {
 	toggle(target: Target, options: OpenCloseOptions): void;
 
 	/**
+	 * Open all panels.
+	 */
+	openAll(): void;
+
+	/**
+	 * Close all panels.
+	 */
+	closeAll(): void;
+
+	/**
 	 * Enable a panel, allowing it to be collapsed or expanded.
 	 *
 	 * @param target The id or index of the panel to enable
@@ -98,21 +99,20 @@ export interface Accordion {
 	disable(target: Target): void;
 
 	/**
-	 * Open all panels.
-	 */
-	openAll(): void;
-
-	/**
-	 * Close all panels.
-	 */
-	closeAll(): void;
-
-	/**
-	 * Gets an accordion item by either it's numerical index or id.
+	 * Add an event listener.
 	 *
-	 * @param target The items id or index
+	 * @param type The event type
+	 * @param listener - Callback function to handle the event.
 	 */
-	getItem(target: Target): AccordionItem | undefined;
+	on: EventFunctionSignature;
+
+	/**
+	 * Remove an event listener.
+	 *
+	 * @param type The event type
+	 * @param listener - Callback function to handle the event.
+	 */
+	off: EventFunctionSignature;
 }
 
 export interface AccordionItem {
@@ -120,6 +120,11 @@ export interface AccordionItem {
 	 * The item id, this is the id used to link the header and panel.
 	 */
 	id: string;
+
+	/**
+	 * The element with the associated `data-for` attribute.
+	 */
+	header: HTMLElement;
 
 	/**
 	 * The element that controls the opening and closing of the associated panel.
@@ -130,11 +135,6 @@ export interface AccordionItem {
 	 * The element associated with the the control.
 	 */
 	panel: HTMLElement;
-
-	/**
-	 * The header original header element.
-	 */
-	header: HTMLElement;
 
 	/**
 	 * Indicates if the item is open.
@@ -183,7 +183,7 @@ export interface Options {
 	activePanelClass: string;
 
 	/**
-	 * Class to add to the active trigger.
+	 * Class to add to the active header.
 	 */
 	activeHeaderClass: string;
 

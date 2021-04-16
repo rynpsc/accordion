@@ -91,7 +91,7 @@ To animate a panel that has padding it is recommended to apply the padding to a 
 
 Creates an [`Accordion`](#accordion-1) instance.
 
-If the passed in `id` doesn't match an element in the DOM,` undefined` is returned. It is therefore recommended to add a check before calling any properties or methods.
+If the passed in `id` doesn't match an element in the DOM, `undefined` is returned. Therefore, it is recommended to add a check before calling any properties or methods.
 
 ```js
 import { accordion } from '@rynpsc/accordion';
@@ -297,13 +297,7 @@ instance.off('open', function(event) {
 
 ## AccordionItem
 
-A header panel pair is represented by an [`AccordionItem`](#accordionitem).
-
-```js
-let item = instance.getItemById('panel-one');
-
-item?.open({ animate: true });
-```
+A header/panel pair is represented by an [`AccordionItem`](#accordionitem).
 
 ### id
 
@@ -311,17 +305,23 @@ The item id, this is the id used to link the header and panel.
 
 - Type: `string`
 
+### header
+
+The element with the associated `data-for` attribute.
+
+- Type: HTMLElement
+
+### button
+
+The button that controls the opening and closing of the associated panel.
+
+- Type: `HTMLButtonElement`
+
 ### panel
-
-The element that controls the opening and closing of the associated panel.
-
-- Type: `HTMLElement`
-
-### control
 
 The element associated with the control.
 
-- Type: `HTMLButtonElement`
+- Type: `HTMLElement`
 
 ### active
 
@@ -390,7 +390,7 @@ Class to add to the active header.
 - Type: `string`
 - Default: `''`
 
-### triggerClass
+### headerButtonClass
 
 Class to add to the generated header button.
 
@@ -442,13 +442,15 @@ instance.on('open', function(event) {
 
 ## Requirements
 
-This package is distributed in commonjs, umd and ES module format. It is written in ES2020 syntax and requires the following browser APIs:
+This package is written and distributed in ES module format, as well as commonjs and umd for legacy support. It is written using ES2020 syntax and features, and requires the following browser APIs:
 
 - CustomEvent
 - Element.classList
 - HTMLOrForeignElement.dataset
-- Element​.query​SelectorAll
+- Element.querySelectorAll
 - Window.requestAnimation
+
+ES module format should be the preferred format for consuming. If using umd you'll need to use `accordion.accordion`, `accordion.instances` and `accordion.getInstanceById`.
 
 ## License
 
