@@ -24,6 +24,11 @@ export interface Accordion {
 	id: string
 
 	/**
+	 * The root element matching the id.
+	 */
+	root: HTMLElement;
+
+	/**
 	 * Initialises the instance.
 	 */
 	init(): void;

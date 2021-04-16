@@ -30,9 +30,9 @@ export function getInstanceById(id: string) {
 export function accordion(id: string, options: Partial<Options> = {}): Accordion | undefined {
 	const config = { ...defaults, ...options };
 
-	const element = <HTMLElement>document.getElementById(id);
+	const rootElement = <HTMLElement>document.getElementById(id);
 
-	if (element === null) {
+	if (rootElement === null) {
 		return;
 	}
 
@@ -73,7 +73,7 @@ export function accordion(id: string, options: Partial<Options> = {}): Accordion
 			return;
 		}
 
-		const headers = Array.from(element.querySelectorAll('[data-for]'));
+		const headers = Array.from(rootElement.querySelectorAll('[data-for]'));
 
 		headers.forEach(header => {
 			if (!(header instanceof HTMLElement)) {
@@ -99,7 +99,7 @@ export function accordion(id: string, options: Partial<Options> = {}): Accordion
 		emit('init');
 
 		if (config.initialisedClass) {
-			element.classList.add(config.initialisedClass);
+			rootElement.classList.add(config.initialisedClass);
 		}
 	}
 
@@ -163,7 +163,7 @@ export function accordion(id: string, options: Partial<Options> = {}): Accordion
 		}
 
 		if (config.initialisedClass) {
-			element.classList.remove(config.initialisedClass);
+			rootElement.classList.remove(config.initialisedClass);
 		}
 
 		items.forEach(item => {
@@ -457,14 +457,14 @@ export function accordion(id: string, options: Partial<Options> = {}): Accordion
 	let on: EventFunctionSignature = function(type, listener) {
 		let prefixedName = getPrefixedEventName(type);
 
-		element.addEventListener(prefixedName, listener as EventListener);
+		rootElement.addEventListener(prefixedName, listener as EventListener);
 
 		// Track event listeners to remove when calling destroy.
 		(events[prefixedName] || (events[prefixedName] = [])).push(listener);
 	}
 
 	let off: EventFunctionSignature = function (type, listener) {
-		element.removeEventListener(getPrefixedEventName(type), listener as EventListener);
+		rootElement.removeEventListener(getPrefixedEventName(type), listener as EventListener);
 	}
 
 	/**
@@ -485,7 +485,7 @@ export function accordion(id: string, options: Partial<Options> = {}): Accordion
 			...options,
 		});
 
-		return element.dispatchEvent(event);
+		return rootElement.dispatchEvent(event);
 	}
 
 	/**
@@ -500,6 +500,7 @@ export function accordion(id: string, options: Partial<Options> = {}): Accordion
 
 	return instances[id] = {
 		id,
+		root: rootElement,
 		on,
 		off,
 		init,
