@@ -1,7 +1,7 @@
 # Accordion
 
 ![npm version](https://img.shields.io/npm/v/@rynpsc/accordion)
-![npm bundle size (minified and gziped)](https://img.shields.io/bundlephobia/minzip/@rynpsc/accordion?label=size)
+![npm bundle size (minified and gzipped)](https://img.shields.io/bundlephobia/minzip/@rynpsc/accordion?label=size)
 
 ## Install
 
