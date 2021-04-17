@@ -96,11 +96,12 @@ export function accordion(id: string, options: Partial<Options> = {}): Accordion
 		});
 
 		initialised = true;
-		emit('init');
 
 		if (config.initialisedClass) {
 			rootElement.classList.add(config.initialisedClass);
 		}
+
+		emit('init');
 	}
 
 	function addItem(element: HTMLElement) {
