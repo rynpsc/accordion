@@ -201,4 +201,9 @@ export interface Options {
 	 * Allow multiple panels to be expanded at once.
 	 */
 	multiselect: boolean;
+
+	/**
+	 * Prefix to use for data attributes e.g data-prefix-for.
+	 */
+	dataAttributePrefix: string;
 }

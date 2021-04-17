@@ -20,10 +20,10 @@ The accordion library tries to impose as few structural HTML requirements as pos
 
 ```html
 <div id="example">
-  <h2 data-for="panel-one">Panel One</h2>
+  <h2 data-accordion-for="panel-one">Panel One</h2>
   <div id="panel-one">...</div>
 
-  <h2 data-for="panel-two">Panel Two</h2>
+  <h2 data-accordion-for="panel-two">Panel Two</h2>
   <div id="panel-two">...</div>
 </div>
 ```
@@ -410,6 +410,13 @@ Allow multiple panels to be expanded at once.
 
 - Type: `boolean`
 - Default: `true`
+
+### dataAttributePrefix
+
+Prefix to use for data attributes e.g data-prefix-for.
+
+- Type: `string`
+- Default: `accordion`
 
 ## Events
 

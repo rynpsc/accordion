@@ -73,7 +73,7 @@ export function accordion(id: string, options: Partial<Options> = {}): Accordion
 			return;
 		}
 
-		const headers = Array.from(rootElement.querySelectorAll('[data-for]'));
+		const headers = Array.from(rootElement.querySelectorAll(`[${getPrefixedDataAttribute('for')}]`));
 
 		headers.forEach(header => {
 			if (!(header instanceof HTMLElement)) {
@@ -86,11 +86,11 @@ export function accordion(id: string, options: Partial<Options> = {}): Accordion
 				return;
 			}
 
-			if (header.dataset.expanded !== undefined) {
+			if (header.getAttribute(getPrefixedDataAttribute('expanded')) !== null) {
 				item.open({ animate: false });
 			}
 
-			if (header.dataset.disabled !== undefined) {
+			if (header.getAttribute(getPrefixedDataAttribute('disabled')) !== null) {
 				item.disable();
 			}
 		});
@@ -104,7 +104,7 @@ export function accordion(id: string, options: Partial<Options> = {}): Accordion
 	}
 
 	function addItem(element: HTMLElement) {
-		let id = <string>element.dataset.for;
+		let id = <string>element.getAttribute(getPrefixedDataAttribute('for'));
 
 		if (id === undefined) {
 			return;
@@ -502,6 +502,10 @@ export function accordion(id: string, options: Partial<Options> = {}): Accordion
 	 */
 	function getPrefixedEventName(name: string) {
 		return `accordion:${name};`
+	}
+
+	function getPrefixedDataAttribute(name: string) {
+		return `data-${config.dataAttributePrefix}-${name}`;
 	}
 
 	return instances[id] = {
