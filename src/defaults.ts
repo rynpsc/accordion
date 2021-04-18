@@ -7,5 +7,5 @@ export const defaults: Options = {
 	headerButtonClass: '',
 	animate: true,
 	multiselect: true,
-	dataAttributePrefix: 'accordion',
+	prefix: 'accordion',
 };

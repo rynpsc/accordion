@@ -424,7 +424,7 @@ export function accordion(id: string, options: Partial<Options> = {}): Accordion
 	}
 
 	function getPrefixedDataAttribute(name: string) {
-		return `data-${config.dataAttributePrefix}-${name}`;
+		return `data-${config.prefix}-${name}`;
 	}
 
 	return instances[id] = {

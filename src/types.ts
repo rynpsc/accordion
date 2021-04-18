@@ -205,5 +205,5 @@ export interface Options {
 	/**
 	 * Prefix to use for data attributes e.g data-prefix-for.
 	 */
-	dataAttributePrefix: string;
+	prefix: string;
 }
