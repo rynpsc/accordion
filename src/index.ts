@@ -420,7 +420,7 @@ export function accordion(id: string, options: Partial<Options> = {}): Accordion
 	 * @returns The prefixed event name
 	 */
 	function getPrefixedEventName(name: string) {
-		return `accordion:${name};`
+		return `${config.prefix}:${name};`
 	}
 
 	function getPrefixedDataAttribute(name: string) {
