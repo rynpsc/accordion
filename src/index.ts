@@ -168,27 +168,24 @@ export function accordion(id: string, options: Partial<Options> = {}): Accordion
 		}
 
 		items.forEach(item => {
-			let controlHtml = item.button.innerHTML;
-			let controlParent = <HTMLElement>item.button.parentNode;
+			let buttonHtml = item.button.innerHTML;
+			let buttonParent = <HTMLElement>item.button.parentNode;
+			let { activePanelClass, activeHeaderClass } = config;
 
-			if (config.activeHeaderClass) {
-				item.button.classList.remove(config.activeHeaderClass);
+			if (activeHeaderClass) {
+				item.button.classList.remove(activeHeaderClass);
 			}
 
-			if (config.headerButtonClass) {
-				controlParent.className = item.button.className;
+			if (activePanelClass) {
+				item.panel.classList.remove(activePanelClass);
 			}
 
 			item.button.remove();
-			controlParent.innerHTML = controlHtml;
+			buttonParent.innerHTML = buttonHtml;
 
 			['role', 'style', 'aria-labelledby'].forEach(attribute => {
 				item.panel.removeAttribute(attribute);
 			});
-
-			if (config.activePanelClass) {
-				item.panel.classList.remove(config.activePanelClass);
-			}
 		});
 
 		items.length = 0;
@@ -349,12 +346,14 @@ export function accordion(id: string, options: Partial<Options> = {}): Accordion
 		item.active = false;
 		item.button.setAttribute('aria-expanded', 'false');
 
-		if (config.activePanelClass) {
-			item.panel.classList.remove(config.activePanelClass);
+		let { activePanelClass, activeHeaderClass } = config;
+
+		if (activePanelClass) {
+			item.panel.classList.remove(activePanelClass);
 		}
 
-		if (config.activeHeaderClass) {
-			item.header.classList.remove(config.activeHeaderClass);
+		if (activeHeaderClass) {
+			item.header.classList.remove(activeHeaderClass);
 		}
 
 		if (!animate || !hasHeightTransition(item.panel)) {
@@ -371,9 +370,8 @@ export function accordion(id: string, options: Partial<Options> = {}): Accordion
 	}
 
 	function onHeaderClick(event: MouseEvent, id: string) {
-		event.preventDefault();
-
 		toggle(id);
+		event.preventDefault();
 	}
 
 	function onHeaderKeydown(event: KeyboardEvent, id: string) {
