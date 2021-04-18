@@ -207,31 +207,21 @@ export function accordion(id: string, options: Partial<Options> = {}): Accordion
 		initialised = false;
 	}
 
-	function focusNext() {
-		shiftFocus(1);
-	}
+	function moveFocus(index: number, relative = false) {
+		let newIndex: number;
 
-	function focusPrevious() {
-		shiftFocus(-1);
-	}
+		if (!relative) {
+			newIndex = index;
+		} else {
+			let active = document.activeElement;
+			let activeIndex = items.findIndex(item => item.button === active);
 
-	function focusFirst() {
-		items[0].button.focus();
-	}
+			if (activeIndex === -1) {
+				return false;
+			}
 
-	function focusLast() {
-		items[items.length - 1].button.focus();
-	}
-
-	function shiftFocus(step: number) {
-		let active = document.activeElement;
-		let activeIndex = items.findIndex(item => item.button === active);
-
-		if (activeIndex === -1) {
-			return false;
+			newIndex = activeIndex + index;
 		}
-
-		let newIndex = activeIndex + step;
 
 		items[modulo(newIndex, items.length)].button.focus();
 	}
@@ -390,10 +380,10 @@ export function accordion(id: string, options: Partial<Options> = {}): Accordion
 		let { key } = event;
 
 		let keys:{ [index: string]: () => any } = {
-			'ArrowUp': focusPrevious,
-			'ArrowDown': focusNext,
-			'End': focusLast,
-			'Home': focusFirst,
+			'ArrowUp': () => moveFocus(-1, true),
+			'ArrowDown': () => moveFocus(1, true),
+			'End': () => moveFocus(items.length - 1),
+			'Home': () => moveFocus(0),
 			'Enter': () => toggle(id),
 			'Space': () => toggle(id),
 		};
