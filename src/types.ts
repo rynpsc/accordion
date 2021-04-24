@@ -56,7 +56,7 @@ export interface Accordion {
 	 * @param target The items id or index
 	 * @param options
 	 */
-	open(target: Target | Target[], options: OpenCloseOptions): void;
+	open(target: Target | Target[], options?: OpenCloseOptions): void;
 
 	/**
 	 * Collapse an accordion item.
@@ -64,7 +64,7 @@ export interface Accordion {
 	 * @param target The items id or index
 	 * @param options
 	 */
-	close(target: Target | Target[], options: OpenCloseOptions): void;
+	close(target: Target | Target[], options?: OpenCloseOptions): void;
 
 	/**
 	 * Toggle the panel with the provided ID.
@@ -72,7 +72,7 @@ export interface Accordion {
 	 * @param target The id or index of the panel to toggle
 	 * @param options
 	 */
-	toggle(target: Target, options: OpenCloseOptions): void;
+	toggle(target: Target, options?: OpenCloseOptions): void;
 
 	/**
 	 * Open all panels.
