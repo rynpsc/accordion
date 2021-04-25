@@ -33,7 +33,7 @@ The accordion library tries to impose as few structural HTML requirements as pos
 The [`accordion`](#accordionid-options) constructor takes two parameters:
 
 - id - The ID of the containing element
-- options - Configuration Object [(see options)](#options) (optional)
+- options - An optional [options object](#options-2)
 
 ```js
 import { accordion } from '@rynpsc/accordion';
@@ -86,7 +86,7 @@ To animate a panel that has padding it is recommended to apply the padding to a 
 ### accordion(id, options)
 
 - id: `string`
-- options: [`Options`](#options)
+- options: [`Options`](#options-2)
 - Returns: <code><a href="#accordion-1">Accordion</a> | undefined</code>
 
 Creates an [`Accordion`](#accordion-1) instance.
@@ -134,28 +134,6 @@ if (instance) {
 
 ## Accordion
 
-### init()
-
-Initialises the instance.
-
-- Returns: `void`
-
-```js
-instance.init();
-```
-
-If calling `init` after calling `destroy` any event listeners will need to be re-registered.
-
-### destroy()
-
-Restores the DOM changed in the `init` method and removes any registered event listeners added via the `on` method.
-
-- Returns: `void`
-
-```js
-instance.destroy();
-```
-
 ### id
 
 The `id` passed into the `accordion` constructor.
@@ -181,6 +159,28 @@ Gets an accordion item by either its numerical index or id.
 
 ```ts
 instance.getItem('panel-one');
+```
+
+### init()
+
+Initialises the instance.
+
+- Returns: `void`
+
+```js
+instance.init();
+```
+
+If calling `init` after calling `destroy` any event listeners will need to be re-registered.
+
+### destroy()
+
+Restores the DOM changed in the `init` method and removes any registered event listeners added via the `on` method.
+
+- Returns: `void`
+
+```js
+instance.destroy();
 ```
 
 ### open(target, options)
@@ -411,7 +411,7 @@ Allow multiple panels to be expanded at once.
 - Type: `boolean`
 - Default: `true`
 
-### dataAttributePrefix
+### prefix
 
 Prefix to use for data attributes e.g data-prefix-for.
 
