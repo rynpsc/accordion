@@ -10,7 +10,7 @@
 ### Added
 
 - Added `headerButtonClass` option.
-- Added `dataAttributePrefix` option.
+- Added `prefix` option.
 - Added `id` property to the Accordion instance.
 - Added `root` property to the Accordion instance.
 - Added `items` property to the Accordion instance.
@@ -18,8 +18,8 @@
 
 ### Changed
 
-- Data attributes are now prefixed with `accordion`.
 - Improved type information.
+- Data attributes such as `data-for` now require the `accordion` prefix.
 - `initialisedClass`, `activePanelClass` and `activeHeaderClass` are no longer added by default.
 - Event names passed to the `on` and `off` methods are no longer prefixed with `accordion:`.
 
