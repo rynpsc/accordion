@@ -1,4 +1,4 @@
-export function up(element: HTMLElement, animate = true) {
+export function animateOpen(element: HTMLElement, animate = true) {
 	if (!animate || !hasHeightTransition(element)) {
 		element.style.height = '';
 		element.style.display = 'block';
@@ -14,7 +14,7 @@ export function up(element: HTMLElement, animate = true) {
 	}
 }
 
-export function down(element: HTMLElement, animate = true) {
+export function animateClose(element: HTMLElement, animate = true) {
 	if (!animate || !hasHeightTransition(element)) {
 		element.style.display = 'none';
 	} else {

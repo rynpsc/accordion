@@ -10,7 +10,7 @@ import {
 	Options,
 	Target,
 } from './types';
-import { up, down } from './animate';
+import { animateOpen, animateClose } from './animate';
 
 export const instances: {
 	[id: string]: Accordion | undefined;
@@ -312,7 +312,7 @@ export function accordion(id: string, options: Partial<Options> = {}): Accordion
 			item.header.classList.add(activeHeaderClass);
 		}
 
-		up(item.panel, animate);
+		animateOpen(item.panel, animate);
 
 		if (!multiselect) {
 			close(activeIds, options);
@@ -345,7 +345,7 @@ export function accordion(id: string, options: Partial<Options> = {}): Accordion
 			item.header.classList.remove(activeHeaderClass);
 		}
 
-		down(item.panel, animate);
+		animateClose(item.panel, animate);
 
 		let index = activeIds.indexOf(item.id);
 
