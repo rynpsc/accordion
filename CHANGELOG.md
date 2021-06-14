@@ -16,13 +16,13 @@
 - Added `items` property to the Accordion instance.
 - Added `getItem` method to the Accordion instance.
 
+### Removed
+
+- Removed `moveTriggerClass` option. This behaviour can be implemented via events if required.
+
 ### Changed
 
 - Improved type information.
 - Data attributes such as `data-for` now require the `accordion` prefix.
 - `initialisedClass`, `activePanelClass` and `activeHeaderClass` are no longer added by default.
 - Event names passed to the `on` and `off` methods are no longer prefixed with `accordion:`.
-
-### Removed
-
-- Removed `moveTriggerClass` option. This behaviour can be implemented via events if required.
