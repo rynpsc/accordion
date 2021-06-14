@@ -1,31 +1,53 @@
 {
-  "name": "@rynpsc/accordion",
-  "version": "1.1.0",
-  "description": "A modern, lightweight and accessible accordion",
-  "main": "dist/accordion.cjs.js",
-  "module": "dist/accordion.es.js",
-  "files": [
-    "src",
-    "dist",
-    "README.md"
-  ],
-  "scripts": {
-    "dev": "rollup -c -w",
-    "build": "rimraf dist && rollup -c",
-    "prepare": "npm run build"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/rynpsc/accordion"
-  },
-  "keywords": [
-    "accordion",
-    "accessibility"
-  ],
-  "author": "Ryan Pascoe",
-  "license": "MIT",
-  "devDependencies": {
-    "rimraf": "^3.0.2",
-    "rollup": "^2.6.1"
-  }
+	"name": "@rynpsc/accordion",
+	"description": "A lightweight, accessible accordion",
+	"version": "1.1.0",
+	"main": "dist/commonjs/accordion.js",
+	"module": "dist/module/accordion.js",
+	"unpkg": "dist/umd/accordion.js",
+	"types": "dist/types/index.d.ts",
+	"author": "Ryan Pascoe",
+	"license": "MIT",
+	"repository": "github:rynpsc/accordion",
+	"files": [
+		"dist"
+	],
+	"keywords": [
+		"accordion",
+		"accessibility"
+	],
+	"scripts": {
+		"dev": "rimraf dist && rollup -c -w",
+		"build": "rimraf dist && rollup -c --environment BUILD:production && tsc --declaration --emitDeclarationOnly",
+		"prepare": "npm run build",
+		"test": "jest"
+	},
+	"jest": {
+		"testEnvironment": "jsdom",
+		"testMatch": [
+			"**/__tests__/**/*.(ts|js)",
+			"**/?(*.)+(spec|test).(ts|js)"
+		],
+		"transform": {
+			"^.+\\.(ts)$": "ts-jest"
+		},
+		"globals": {
+			"ts-jest": {
+				"diagnostics": {
+					"ignoreCodes": 151001
+				}
+			}
+		}
+	},
+	"devDependencies": {
+		"@rollup/plugin-typescript": "^8.2.1",
+		"@types/jest": "^26.0.23",
+		"jest": "^27.0.4",
+		"rimraf": "^3.0.2",
+		"rollup": "^2.50.6",
+		"rollup-plugin-terser": "^7.0.2",
+		"ts-jest": "^27.0.2",
+		"tslib": "^2.2.0",
+		"typescript": "^4.3.2"
+	}
 }
