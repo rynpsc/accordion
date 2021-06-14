@@ -1,7 +1,7 @@
 {
 	"name": "@rynpsc/accordion",
 	"description": "A lightweight, accessible accordion",
-	"version": "1.1.0",
+	"version": "2.0.0",
 	"main": "dist/commonjs/accordion.js",
 	"module": "dist/module/accordion.js",
 	"unpkg": "dist/umd/accordion.js",
